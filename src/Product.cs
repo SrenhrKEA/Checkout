@@ -9,11 +9,11 @@ namespace Models
         public char? MultipackBaseProductCode { get; set; }
         public int MultipackQuantity { get; set; }
         public bool IsCampaignProduct { get; set; }
-        public decimal CampaignPrice { get; set; }
+        public decimal CampaignDiscount { get; set; }
         public int CampaignQuantity { get; set; }
         public string CampaignDescription { get; set; }
 
-        public Product(char code, decimal price, int group, bool isMultipack = false, char? multipackBaseProductCode = null, int multipackQuantity = 0, bool isCampaignProduct = false, decimal campaignPrice = 0, int campaignQuantity = 0, string campaignDescription = "")
+        public Product(char code, decimal price, int group, bool isMultipack = false, char? multipackBaseProductCode = null, int multipackQuantity = 0, bool isCampaignProduct = false, decimal campaignDiscount = 0, int campaignQuantity = 0, string campaignDescription = "No Discount!")
         {
             Code = code;
             Price = price;
@@ -22,7 +22,7 @@ namespace Models
             MultipackBaseProductCode = multipackBaseProductCode;
             MultipackQuantity = multipackQuantity;
             IsCampaignProduct = isCampaignProduct;
-            CampaignPrice = campaignPrice;
+            CampaignDiscount = campaignDiscount;
             CampaignQuantity = campaignQuantity;
             CampaignDescription = campaignDescription;
         }

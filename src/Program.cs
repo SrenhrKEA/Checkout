@@ -20,16 +20,15 @@ class Program
 
         DisplayWelcomeMessage();
 
+        //LOOP
         do
         {
             var keyInfo = Console.ReadKey(intercept: true);
-            Console.Clear();
-            DisplayWelcomeMessage();
 
             switch (keyInfo.Key)
             {
                 case ConsoleKey.Escape:
-                    if (await HandleExitConfirmation())
+                    if (HandleExitConfirmation(checkoutManager))
                         return;
                     break;
                 case ConsoleKey.OemMinus:
@@ -42,6 +41,7 @@ class Program
                     await HandleProductScan(keyInfo, scanner);
                     break;
             }
+            DisplayWelcomeMessage();
         } while (true);
     }
 
@@ -63,16 +63,48 @@ class Program
     {
         do
         {
-            Console.Clear();
             Console.WriteLine("Scanned Products:");
-            checkoutManager.DisplayScannedProducts();
-            Console.WriteLine("Enter the index of the product to remove:");
 
-            if (int.TryParse(Console.ReadLine(), out int index) && index >= 0)
+            checkoutManager.DisplayScannedProducts();
+            Console.WriteLine("Enter the index of the product to remove or press ESC to exit:");
+
+
+            string input = "";
+            ConsoleKeyInfo keyInfo;
+
+            do
             {
-                if (checkoutManager.RemoveScannedProductAt(index))
+                keyInfo = Console.ReadKey(true);
+                if (keyInfo.Key == ConsoleKey.Escape)
+                {
+                    Console.WriteLine("Continuing...");
+                    checkoutManager.UpdateDisplayPrice();
+                    return;
+                }
+                else if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    break;
+                }
+                else if (keyInfo.Key == ConsoleKey.Backspace && input.Length > 0)
+                {
+                    input = input[0..^1];  // Remove last character for backspace
+                    Console.Write("\b \b");  // Reflect backspace in console
+                }
+                else if (!char.IsControl(keyInfo.KeyChar))
+                {
+                    input += keyInfo.KeyChar;  // Build the input string
+                    Console.Write(keyInfo.KeyChar + "\n");  // Echo the character
+
+                }
+            }
+            while (true);
+
+            if (int.TryParse(input, out int index) && index >= 1)
+            {
+                if (checkoutManager.RemoveScannedProductAt(index - 1))
                 {
                     Console.WriteLine("Product removed successfully.");
+                    checkoutManager.UpdateDisplayPrice();
                     break;
                 }
                 else
@@ -80,25 +112,33 @@ class Program
                     Console.WriteLine("Invalid index. No product removed.");
                 }
             }
-            else
+            else if (!string.IsNullOrEmpty(input))
             {
                 Console.WriteLine("Invalid input. Please enter a valid index.");
             }
+
         } while (true);
     }
 
-    private static async Task<bool> HandleExitConfirmation()
+
+
+    private static bool HandleExitConfirmation(CheckoutManager checkoutManager)
     {
         Console.WriteLine("Are you sure you want to exit? Press ESC again to quit.");
-        var confirmKey = Console.ReadKey(intercept: true);
 
-        if (confirmKey.Key != ConsoleKey.Escape)
+        var confirmKey = Console.ReadKey(intercept: true);
+        Console.Clear();
+
+        if (confirmKey.Key == ConsoleKey.Escape)
+            return confirmKey.Key == ConsoleKey.Escape;
+
+        else
         {
             Console.WriteLine("Continuing...");
-            await Task.Delay(500);
+            checkoutManager.UpdateDisplayPrice();
+            return false;
         }
 
-        return confirmKey.Key == ConsoleKey.Escape;
     }
 
     private static void HandleReceipt(CheckoutManager checkoutManager)

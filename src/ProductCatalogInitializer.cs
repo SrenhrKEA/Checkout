@@ -38,8 +38,8 @@ namespace Services
             productCatalog.AddProduct(new Product('F', 45m, 3, isMultipack: true, multipackBaseProductCode: 'B', 10));
 
             // Campaign products
-            productCatalog.AddProduct(new Product('G', 100m, 4, isCampaignProduct: true, campaignPrice: 90m, campaignQuantity: 2, campaignDescription: "Buy 2 for 90 each"));
-            productCatalog.AddProduct(new Product('H', 120m, 4, isCampaignProduct: true, campaignPrice: 110m, campaignQuantity: 3, campaignDescription: "Buy 3 for 110 each"));
+            productCatalog.AddProduct(new Product('G', 100m, 4, isCampaignProduct: true, campaignDiscount: 10, campaignQuantity: 2, campaignDescription: "Buy 2 at 10% discount"));
+            productCatalog.AddProduct(new Product('H', 120m, 4, isCampaignProduct: true, campaignDiscount: 20, campaignQuantity: 3, campaignDescription: "Buy 3 at 20% discount"));
 
             // Continue adding other products as needed...
         }

@@ -27,7 +27,7 @@ namespace Services
         {
             for (int i = 0; i < _scannedProducts.Count; i++)
             {
-                Console.WriteLine($"{i}: Product Code - {_scannedProducts[i].Code}, Price - {_scannedProducts[i].Price}");
+                Console.WriteLine($"#{i + 1}, Product Code: {_scannedProducts[i].Code}, Campaign: {_scannedProducts[i].CampaignDescription}");
             }
         }
 
@@ -43,7 +43,7 @@ namespace Services
             return false;
         }
 
-        private void UpdateDisplayPrice()
+        public void UpdateDisplayPrice()
         {
             decimal totalPrice = _cheapPriceCalculator.CalculateTotalPrice(_scannedProducts);
             Console.WriteLine($"Number of items: {counter} || Total Price: {totalPrice.ToString("F2")}");
