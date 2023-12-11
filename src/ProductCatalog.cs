@@ -6,10 +6,7 @@ namespace Services
     {
         private Dictionary<char, Product> _products = new();
 
-        public void AddProduct(Product product)
-        {
-            _products[product.Code] = product;
-        }
+        public void AddProduct(Product product) => _products[product.Code] = product;
 
         public Product GetProduct(char code)
         {
@@ -18,7 +15,7 @@ namespace Services
                 return product;
             }
 
-            return null!; // or throw an exception
+            throw new KeyNotFoundException($"Product with code '{code}' not found.");
         }
     }
 }

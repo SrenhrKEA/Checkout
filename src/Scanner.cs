@@ -7,24 +7,26 @@ namespace Services
         private readonly ProductCatalog _productCatalog;
         public delegate void ProductScannedEventHandler(Product product);
         public event ProductScannedEventHandler? ProductScanned;
-        
+
         public Scanner(ProductCatalog productCatalog)
         {
             _productCatalog = productCatalog;
         }
 
-        public async Task ScanAsync(char productCode)
+        public async Task<bool> ScanAsync(char productCode)
         {
             await Task.Delay(500);
 
-            Product product = _productCatalog.GetProduct(productCode);
-            if (product != null)
+            try
             {
+                Product product = _productCatalog.GetProduct(productCode);
                 ProductScanned?.Invoke(product);
+                return true;
             }
-            else
+            catch (KeyNotFoundException e)
             {
-                Console.WriteLine("Invalid input. Please enter a valid product code.");
+                Console.WriteLine(e.Message);
+                return false;
             }
         }
     }

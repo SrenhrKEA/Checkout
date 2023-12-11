@@ -8,7 +8,7 @@ class Program
     {
         var productCatalog = new ProductCatalog();
         var initializer = new ProductCatalogInitializer();
-        initializer.PopulateProductCatalog(productCatalog);
+        ProductCatalogInitializer.PopulateProductCatalog(productCatalog);
 
         var scanner = new Scanner(productCatalog);
 
@@ -40,7 +40,6 @@ class Program
             }
             else
             {
-                // Process regular key presses for product scanning
                 char productCode = char.ToUpper(keyInfo.KeyChar);
                 if (IsValidProductCode(productCode))
                 {
@@ -58,15 +57,8 @@ class Program
 
     private static async Task HandleProductScan(char productCode, Scanner scanner)
     {
-        if (IsValidProductCode(productCode))
-        {
-            await scanner.ScanAsync(productCode);
-            Console.WriteLine($"Product {productCode} scanned.");
-        }
-        else
-        {
-            Console.WriteLine("Invalid input. Please enter a valid product code.");
-        }
+        await scanner.ScanAsync(productCode);
+        Console.WriteLine($"Product {productCode} scanned.");
     }
 
 
@@ -79,7 +71,6 @@ class Program
             DisplayScannedProducts(checkoutManager);
             Console.WriteLine("Enter the index of the product to remove, 'Tab' for the receipt, or press ESC to exit:");
 
-
             string input = "";
             ConsoleKeyInfo keyInfo;
 
@@ -88,7 +79,6 @@ class Program
                 keyInfo = Console.ReadKey(true);
                 if (keyInfo.Key == ConsoleKey.Escape)
                 {
-                    Console.WriteLine("Continuing...");
                     return;
                 }
                 else if (keyInfo.Key == ConsoleKey.Tab)
@@ -137,19 +127,7 @@ class Program
     private static bool HandleExitConfirmation()
     {
         Console.WriteLine("Are you sure you want to exit? Press ESC again to quit.");
-
-        var confirmKey = Console.ReadKey(intercept: true);
-        Console.Clear();
-
-        if (confirmKey.Key == ConsoleKey.Escape)
-            return confirmKey.Key == ConsoleKey.Escape;
-
-        else
-        {
-            Console.WriteLine("Continuing...");
-            return false;
-        }
-
+        return Console.ReadKey(intercept: true).Key == ConsoleKey.Escape;
     }
 
     private static void HandleReceipt(CheckoutManager checkoutManager)

@@ -5,10 +5,11 @@ namespace Services
 {
     public class CheckoutManager
     {
-        public int ItemCount = 0;
-        private List<Product> _scannedProducts = new();
-        private CheapPriceCalculator _cheapPriceCalculator;
-        private ExpensivePriceCalculator _expensivePriceCalculator;
+        private readonly List<Product> _scannedProducts = new();
+        private readonly CheapPriceCalculator _cheapPriceCalculator;
+        private readonly ExpensivePriceCalculator _expensivePriceCalculator;
+
+        public int ItemCount { get; private set; } = 0;
 
         public CheckoutManager(CheapPriceCalculator cheapCalculator, ExpensivePriceCalculator expensiveCalculator)
         {
@@ -19,7 +20,7 @@ namespace Services
         public void AddScannedProduct(Product product)
         {
             _scannedProducts.Add(product);
-            ItemCount += 1;
+            ItemCount++;
         }
 
         public bool RemoveScannedProductAt(int index)
@@ -27,7 +28,7 @@ namespace Services
             if (index >= 0 && index < _scannedProducts.Count)
             {
                 _scannedProducts.RemoveAt(index);
-                ItemCount -= 1;
+                ItemCount--;
                 return true;
             }
             return false;
@@ -51,6 +52,7 @@ namespace Services
         public void EmptyBin()
         {
             _scannedProducts.Clear();
+            ItemCount = 0;
         }
     }
 }

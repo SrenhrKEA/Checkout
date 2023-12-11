@@ -3,7 +3,7 @@ namespace Services
 {
     public class ProductCatalogInitializer
     {
-        public void PopulateProductCatalog(ProductCatalog productCatalog)
+        public static void PopulateProductCatalog(ProductCatalog productCatalog)
         {
             // Regular products
             productCatalog.AddProduct(new Product('A', 50m, 1));
