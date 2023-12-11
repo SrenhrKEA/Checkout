@@ -13,7 +13,7 @@ namespace Models
         public int CampaignQuantity { get; set; }
         public string CampaignDescription { get; set; }
 
-        public Product(char code, decimal price, int group, bool isMultipack = false, char? multipackBaseProductCode = null, int multipackQuantity = 0, bool isCampaignProduct = false, decimal campaignDiscount = 0, int campaignQuantity = 0, string campaignDescription = "No Discount!")
+        public Product(char code, decimal price, int group, bool isMultipack = false, char? multipackBaseProductCode = null, int multipackQuantity = 0, bool isCampaignProduct = false, decimal campaignDiscount = 0, int campaignQuantity = 0, string campaignDescription = "")
         {
             Code = code;
             Price = price;

@@ -1,5 +1,6 @@
 ﻿using BusinessLogic;
 using Services;
+using System.Text;
 
 class Program
 {
@@ -173,9 +174,23 @@ class Program
     {
         var scannedProducts = checkoutManager.GetScannedProducts();
         int index = 1;
+
         foreach (var product in scannedProducts)
         {
-            Console.WriteLine($"#{index++}, Product Code: {product.Code}, Campaign: {product.CampaignDescription}");
+            var message = new StringBuilder($"#{index++}, Product Code: {product.Code}");
+
+            if (product.IsMultipack)
+            {
+                message.Append($", Multipack: {product.MultipackQuantity}");
+            }
+
+            if (product.IsCampaignProduct)
+            {
+                message.Append($", Campaign: {product.CampaignDescription}");
+            }
+
+            Console.WriteLine(message);
         }
     }
+
 }

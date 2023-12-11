@@ -41,7 +41,9 @@ namespace Services
             productCatalog.AddProduct(new Product('G', 100m, 4, isCampaignProduct: true, campaignDiscount: 10, campaignQuantity: 2, campaignDescription: "Buy 2 at 10% discount"));
             productCatalog.AddProduct(new Product('H', 120m, 4, isCampaignProduct: true, campaignDiscount: 20, campaignQuantity: 3, campaignDescription: "Buy 3 at 20% discount"));
 
-            // Continue adding other products as needed...
+            //Multipack AND Campaign products
+            productCatalog.AddProduct(new Product('I', 85m, 5, isMultipack: true, multipackBaseProductCode: 'C', 6, isCampaignProduct: true, campaignDiscount: 10, campaignQuantity: 2, campaignDescription: "Buy 2 at 10% discount"));
+            productCatalog.AddProduct(new Product('J', 75m, 5, isMultipack: true, multipackBaseProductCode: 'D', 6, isCampaignProduct: true, campaignDiscount: 20, campaignQuantity: 3, campaignDescription: "Buy 3 at 20% discount"));
         }
     }
 

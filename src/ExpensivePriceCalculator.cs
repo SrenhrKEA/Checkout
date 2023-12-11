@@ -13,10 +13,10 @@ namespace BusinessLogic
 
             decimal totalPrice = 0;
             var receiptBuilder = new StringBuilder();
-
+            receiptBuilder.AppendLine($"Receipt:");
             foreach (var group in groupedProducts)
             {
-                receiptBuilder.AppendLine($"Receipt:\nProduct Group: {group.Key}");
+                receiptBuilder.AppendLine($"Product Group: {group.Key}");
 
                 foreach (var productGroup in group.GroupBy(p => p.Code).OrderBy(p => p.Key))
                 {
@@ -52,11 +52,16 @@ namespace BusinessLogic
                     }
 
                     totalPrice += priceForProductGroup;
-                    receiptBuilder.AppendLine($"  Product: {product.Code}, Quantity: {quantity}, Price: {priceForProductGroup.ToString("C2")}");
+                    if (product.IsMultipack)
+                        receiptBuilder.Append($"  Product: {product.MultipackBaseProductCode} Multipack: {product.MultipackQuantity}");
+                    else
+                        receiptBuilder.Append($"  Product: {product.Code}");
+                    receiptBuilder.AppendLine($", Quantity: {quantity}, Price: {priceForProductGroup.ToString("C2")}");
+
                 }
             }
 
-            receiptBuilder.AppendLine($"Total Price: {totalPrice.ToString("C2")}");
+            receiptBuilder.Append($"Total Price: {totalPrice.ToString("C2")}");
             return receiptBuilder.ToString();
         }
     }
