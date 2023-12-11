@@ -4,6 +4,6 @@ namespace BusinessLogic
 {
     public abstract class PriceCalculator
     {
-        public abstract decimal CalculateTotalPrice(List<Product> products);
+        public abstract string CalculateTotalPrice(List<Product> products);
     }
 }

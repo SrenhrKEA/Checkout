@@ -24,7 +24,7 @@ namespace Services
             }
             else
             {
-                Console.WriteLine("Invalid input. Please enter a valid product code. SCANNER!!");
+                Console.WriteLine("Invalid input. Please enter a valid product code.");
             }
         }
     }

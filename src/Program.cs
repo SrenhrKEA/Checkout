@@ -16,38 +16,47 @@ class Program
 
         var checkoutManager = new CheckoutManager(cheapCalculator, expensiveCalculator);
 
-        scanner.ProductScanned += checkoutManager.AddScannedProduct;
+        scanner.ProductScanned += (product) =>
+        {
+            checkoutManager.AddScannedProduct(product);
+            UpdateDisplayPrice(checkoutManager);
+        };
 
-        DisplayWelcomeMessage();
-
-        //LOOP
+        // Main loop
         do
         {
+            Console.WriteLine("Please scan a product (enter product code), press 'Tab' to view scanned products, or 'ESC' to quit:");
             var keyInfo = Console.ReadKey(intercept: true);
 
-            switch (keyInfo.Key)
+            if (keyInfo.Key == ConsoleKey.Escape)
             {
-                case ConsoleKey.Escape:
-                    if (HandleExitConfirmation(checkoutManager))
-                        return;
-                    break;
-                case ConsoleKey.OemMinus:
-                    HandleRemoveProduct(checkoutManager);
-                    break;
-                case ConsoleKey.Tab:
-                    HandleReceipt(checkoutManager);
-                    break;
-                default:
-                    await HandleProductScan(keyInfo, scanner);
-                    break;
+                if (HandleExitConfirmation())
+                    return;
             }
-            DisplayWelcomeMessage();
+            else if (keyInfo.Key == ConsoleKey.Tab)
+            {
+                HandleScannedProducts(checkoutManager);
+            }
+            else
+            {
+                // Process regular key presses for product scanning
+                char productCode = char.ToUpper(keyInfo.KeyChar);
+                if (IsValidProductCode(productCode))
+                {
+                    await HandleProductScan(productCode, scanner);
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter a valid product code.");
+                }
+            }
         } while (true);
+
     }
 
-    private static async Task HandleProductScan(ConsoleKeyInfo keyInfo, Scanner scanner)
+
+    private static async Task HandleProductScan(char productCode, Scanner scanner)
     {
-        char productCode = char.ToUpper(keyInfo.KeyChar);
         if (IsValidProductCode(productCode))
         {
             await scanner.ScanAsync(productCode);
@@ -59,14 +68,15 @@ class Program
         }
     }
 
-    private static void HandleRemoveProduct(CheckoutManager checkoutManager)
+
+    private static void HandleScannedProducts(CheckoutManager checkoutManager)
     {
         do
         {
             Console.WriteLine("Scanned Products:");
 
-            checkoutManager.DisplayScannedProducts();
-            Console.WriteLine("Enter the index of the product to remove or press ESC to exit:");
+            DisplayScannedProducts(checkoutManager);
+            Console.WriteLine("Enter the index of the product to remove, 'Tab' for the receipt, or press ESC to exit:");
 
 
             string input = "";
@@ -78,7 +88,11 @@ class Program
                 if (keyInfo.Key == ConsoleKey.Escape)
                 {
                     Console.WriteLine("Continuing...");
-                    checkoutManager.UpdateDisplayPrice();
+                    return;
+                }
+                else if (keyInfo.Key == ConsoleKey.Tab)
+                {
+                    HandleReceipt(checkoutManager);
                     return;
                 }
                 else if (keyInfo.Key == ConsoleKey.Enter)
@@ -104,7 +118,6 @@ class Program
                 if (checkoutManager.RemoveScannedProductAt(index - 1))
                 {
                     Console.WriteLine("Product removed successfully.");
-                    checkoutManager.UpdateDisplayPrice();
                     break;
                 }
                 else
@@ -120,9 +133,7 @@ class Program
         } while (true);
     }
 
-
-
-    private static bool HandleExitConfirmation(CheckoutManager checkoutManager)
+    private static bool HandleExitConfirmation()
     {
         Console.WriteLine("Are you sure you want to exit? Press ESC again to quit.");
 
@@ -135,7 +146,6 @@ class Program
         else
         {
             Console.WriteLine("Continuing...");
-            checkoutManager.UpdateDisplayPrice();
             return false;
         }
 
@@ -143,25 +153,9 @@ class Program
 
     private static void HandleReceipt(CheckoutManager checkoutManager)
     {
-        // Console.WriteLine("Scanned Products:");
-        // checkoutManager.DisplayScannedProducts();
-        // Console.WriteLine("Enter the index of the product to remove:");
-
-        // if (int.TryParse(Console.ReadLine(), out int index) && index >= 0)
-        // {
-        //     if (checkoutManager.RemoveScannedProductAt(index))
-        //     {
-        //         Console.WriteLine("Product removed successfully.");
-        //     }
-        //     else
-        //     {
-        //         Console.WriteLine("Invalid index. No product removed.");
-        //     }
-        // }
-        // else
-        // {
-        //     Console.WriteLine("Invalid input. Please enter a valid index.");
-        // }
+        string receipt = checkoutManager.CompleteCheckout();
+        Console.WriteLine(receipt);
+        checkoutManager.EmptyBin();
     }
 
     private static bool IsValidProductCode(char code)
@@ -169,8 +163,19 @@ class Program
         return char.IsLetter(code);
     }
 
-    private static void DisplayWelcomeMessage()
+    private static void UpdateDisplayPrice(CheckoutManager checkoutManager)
     {
-        Console.WriteLine("Please scan a product (enter product code), press '-' to remove a product, or ESC to quit:");
+        string totalPrice = checkoutManager.GetTotalPrice();
+        Console.WriteLine($"Number of items: {checkoutManager.ItemCount} || Total Price: {totalPrice}");
+    }
+
+    private static void DisplayScannedProducts(CheckoutManager checkoutManager)
+    {
+        var scannedProducts = checkoutManager.GetScannedProducts();
+        int index = 1;
+        foreach (var product in scannedProducts)
+        {
+            Console.WriteLine($"#{index++}, Product Code: {product.Code}, Campaign: {product.CampaignDescription}");
+        }
     }
 }

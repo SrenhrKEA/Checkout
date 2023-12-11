@@ -5,7 +5,7 @@ namespace Services
 {
     public class CheckoutManager
     {
-        private int counter = 0;
+        public int ItemCount = 0;
         private List<Product> _scannedProducts = new();
         private CheapPriceCalculator _cheapPriceCalculator;
         private ExpensivePriceCalculator _expensivePriceCalculator;
@@ -19,16 +19,7 @@ namespace Services
         public void AddScannedProduct(Product product)
         {
             _scannedProducts.Add(product);
-            counter += 1;
-            UpdateDisplayPrice();
-        }
-
-        public void DisplayScannedProducts()
-        {
-            for (int i = 0; i < _scannedProducts.Count; i++)
-            {
-                Console.WriteLine($"#{i + 1}, Product Code: {_scannedProducts[i].Code}, Campaign: {_scannedProducts[i].CampaignDescription}");
-            }
+            ItemCount += 1;
         }
 
         public bool RemoveScannedProductAt(int index)
@@ -36,23 +27,30 @@ namespace Services
             if (index >= 0 && index < _scannedProducts.Count)
             {
                 _scannedProducts.RemoveAt(index);
-                counter -= 1;
-                UpdateDisplayPrice();
+                ItemCount -= 1;
                 return true;
             }
             return false;
         }
 
-        public void UpdateDisplayPrice()
+        public IEnumerable<Product> GetScannedProducts()
         {
-            decimal totalPrice = _cheapPriceCalculator.CalculateTotalPrice(_scannedProducts);
-            Console.WriteLine($"Number of items: {counter} || Total Price: {totalPrice.ToString("F2")}");
+            return _scannedProducts;
         }
 
-        public decimal CompleteCheckout()
+        public string GetTotalPrice()
         {
-            decimal totalPrice = _expensivePriceCalculator.CalculateTotalPrice(_scannedProducts);
-            return totalPrice;
+            return _cheapPriceCalculator.CalculateTotalPrice(_scannedProducts);
+        }
+
+        public string CompleteCheckout()
+        {
+            return _expensivePriceCalculator.CalculateTotalPrice(_scannedProducts);
+        }
+
+        public void EmptyBin()
+        {
+            _scannedProducts.Clear();
         }
     }
 }

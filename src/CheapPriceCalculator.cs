@@ -4,7 +4,7 @@ namespace BusinessLogic
 {
     public class CheapPriceCalculator : PriceCalculator
     {
-        public override decimal CalculateTotalPrice(List<Product> products)
+        public override string CalculateTotalPrice(List<Product> products)
         {
             decimal totalPrice = 0;
 
@@ -47,7 +47,7 @@ namespace BusinessLogic
                 totalPrice += productPrice;
             }
 
-            return totalPrice;
+            return totalPrice.ToString("C2");
         }
     }
 }
