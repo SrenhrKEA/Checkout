@@ -1,4 +1,5 @@
 ﻿using BusinessLogic;
+using Models;
 using Services;
 using System.Text;
 
@@ -19,6 +20,10 @@ class Program
 
         scanner.ProductScanned += (product) =>
         {
+            if (product.Code == 'P')
+            {
+                product = UpdateBottleDepositPrice(product);
+            }
             checkoutManager.AddScannedProduct(product);
             UpdateDisplayPrice(checkoutManager);
         };
@@ -32,7 +37,10 @@ class Program
             if (keyInfo.Key == ConsoleKey.Escape)
             {
                 if (HandleExitConfirmation())
+                {
+                    Console.Clear();
                     return;
+                }
             }
             else if (keyInfo.Key == ConsoleKey.Tab)
             {
@@ -146,6 +154,25 @@ class Program
     {
         string totalPrice = checkoutManager.GetTotalPrice();
         Console.WriteLine($"Number of items: {checkoutManager.ItemCount} || Total Price: {totalPrice}");
+    }
+
+    private static Product UpdateBottleDepositPrice(Product product)
+    {
+        Console.WriteLine("Please enter amount for bottle deposit:");
+
+        while (true)
+        {
+            string input = Console.ReadLine()!;
+            if (decimal.TryParse(input, out decimal depositAmount) && depositAmount >= 0)
+            {
+                product.Price -= depositAmount;
+                return product;
+            }
+            else
+            {
+                Console.WriteLine("Invalid input. Please enter a valid decimal number.");
+            }
+        }
     }
 
     private static void DisplayScannedProducts(CheckoutManager checkoutManager)
